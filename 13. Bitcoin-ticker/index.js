@@ -27,8 +27,11 @@ app.post("/",function(req,res){
   }
   request(option , function (error,responce,body) {
     var data = JSON.parse(body);
-    var price = data.price;
-    var currentDate = data.time;
+    // var price = data.price;
+    // var currentDate = data.time;
+  
+
+
     res.write("<p>The current Date is " + currentDate + "</p>");
     res.write("<h1>" + amt + crypto + "is " + price + fiat +"</h1>");
     res.send();
