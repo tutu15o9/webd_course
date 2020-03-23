@@ -12,6 +12,7 @@
           <input type="checkbox" name = "checkbox" value = "<%= elem %>" onChange = "this.form.submit()">
           <p><%=  elem  %></p>
         </div>
+        <input type="hidden" name="listName" value="<%= listTitle %>">
       </form>
 
     <%});%>
@@ -19,7 +20,7 @@
 
       <form class="item" action="/" method="post">
         <input type="text" name="newItem" placeholder="New Item" autocomplete="off">
-        <button type="submit" name="list">+</button>
+        <button type="submit" name="list" value = "<%= listTitle %>" >+</button>
       </form>
   </div>
 

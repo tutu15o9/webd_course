@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const date = require(__dirname + "/date.js");
 const mongoose = require("mongoose");
 const app = express();
-
+const _ = require("lodash");
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -38,10 +38,11 @@ const listSchema = {
 };
 
 const List = mongoose.model("List",listSchema);
-
+const day = date.getDate();
+app.get('/favicon.ico', (req, res) => res.status(204));
 app.get("/", function(req, res) {
 
-  const day = date.getDate();
+
 
   item.find({},function(err,results){
     if (err) {
@@ -73,34 +74,66 @@ app.get("/", function(req, res) {
 app.post("/", function(req, res){
 
   const itemName = req.body.newItem;
+  const listName = req.body.list;
+
+
   var newItem = new item({name:itemName});
-  newItem.save(function(err){
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("New item inserted Successfully");
-    }
-  });
+
+  if(listName === day){
+    newItem.save(function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("New item inserted Successfully");
+      }
+    });
 
 
-  res.redirect("/");
+    res.redirect("/");
+  } else{
+    List.findOne({name:listName},function(err, foundList){
+      foundList.items.push(newItem);
+      foundList.save(function(err){
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("New item inserted Successfully");
+        }
+      });
+    });
+    res.redirect("/"+listName);
+  }
 
 });
 
 app.post("/delete", function(req, res){
   var itemToDelete = req.body.checkbox;
-  item.deleteMany({name: itemToDelete },function(err){
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(itemToDelete + " has been deleted.");
-    }
-  });
-  res.redirect("/");
+  var listName = req.body.listName;
+  if (listName == day) {
+    item.deleteMany({name: itemToDelete },function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(itemToDelete + " has been deleted.");
+        res.redirect("/");
+      }
+    });
+
+  } else {
+    List.findOneAndUpdate({name: listName},{$pull: {items: {name:itemToDelete}}},function(err){
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(itemToDelete + " has been deleted.");
+        res.redirect("/" + listName);
+      }
+    });
+  }
+
 });
 
 app.get("/:customListName", function(req,res){
-  const customListName = req.params.customListName;
+  const customListName = _.capitalize(req.params.customListName);
   // console.log(customListName);
   List.findOne({name: customListName},function(err, foundList){
     if (err) {
@@ -126,8 +159,6 @@ app.get("/:customListName", function(req,res){
 
     }
   });
-
-
 
 });
 
