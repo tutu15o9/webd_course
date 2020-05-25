@@ -1,16 +1,16 @@
 {
-  "name": "keeper-app-part-1-starting",
+  "name": "keeper-app",
   "version": "1.0.0",
   "description": "",
   "keywords": [],
   "main": "src/index.js",
   "dependencies": {
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
     "react-scripts": "^3.4.1"
   },
   "devDependencies": {
-    "typescript": "3.9.3"
+    "typescript": "3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",
